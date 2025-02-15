@@ -13,7 +13,7 @@ DURATION = 5
 FILENAME = "input.wav"
 OUTPUT_AUDIO = "response.wav"
 
-llm = Llama(model_path="gemma-2b-it.Q4_K_M.gguf",)
+llm = Llama(model_path="gemma-2b-it.Q4_K_M.gguf", verbose=False)
 
 # Load Whisper for speech recognition
 whisper_model = whisper.load_model("base")
