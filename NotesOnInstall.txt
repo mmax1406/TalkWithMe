@@ -1,0 +1,10 @@
+Install visual build tools
+
+??
+winget install Kitware.CMake
+winget install Microsoft.VisualStudio.2022.BuildTools
+??
+pip install llama-cpp-python==0.2.77
+pip install --no-cache-dir llama-cpp-python==0.2.77 --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu124/
+
+pip install -U openai-whisper
