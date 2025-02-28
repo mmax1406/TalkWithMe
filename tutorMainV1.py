@@ -7,6 +7,7 @@ import wave
 import soundfile as sf
 import numpy as np
 import keyboard
+import sys
 
 # Audio Recording Settings
 SAMPLE_RATE = 16000
@@ -29,27 +30,40 @@ def remove_emojis(text):
     emoji_pattern = re.compile("[\U00010000-\U0010FFFF]", flags=re.UNICODE)
     return re.sub(emoji_pattern, '', text)
 
-def record_audio(filename, sample_rate): # NOT WORKING AT ALL
+def record_audio(filename): # NOT WORKING AT ALL
     import sounddevice as sd  # Import here to prevent conflicts
-    # print("Press ENTER to start recording...")
-    # keyboard.wait("enter")  # Wait for key press
-    # print("Recording... Press ENTER again to stop.")
-    
-    audio = []
-    stream = sd.InputStream(samplerate=sample_rate, channels=1, dtype=np.int16)
-    with stream:
-        while not keyboard.is_pressed("enter"):  # Stop when ENTER is pressed
-            data, _ = stream.read(1024)
-            audio.append(data)
-    
-    # Save audio
-    audio = np.concatenate(audio, axis=0)
+    """Records audio while the Enter key is held down using sd.stream."""
+    recording = []
+    recording_started = False
+
+    def callback(indata, frames, time, status):
+        """Callback function to process audio chunks in real time."""
+        nonlocal recording_started
+        if status:
+            print(f"⚠️ Warning: {status}")
+        if keyboard.is_pressed("enter"):
+            recording.append(indata.copy())  # Store recorded chunk
+            recording_started = True
+
+    keyboard.wait("enter")
+    # Start streaming audio
+    with sd.InputStream(samplerate=16000, channels=1, 
+                        dtype=np.int16, callback=callback, device=None):
+        while keyboard.is_pressed("enter"):
+            pass  # Keep the stream open while Enter is held
+
+    if not recording_started:
+        print("⚠ No audio recorded! Check your microphone settings.")
+        return None  
+
+    # Save as WAV file
     with wave.open(filename, "wb") as wf:
         wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(sample_rate)
-        wf.writeframes(audio.tobytes())
-    print("Recording saved!")
+        wf.setsampwidth(2)  # 16-bit audio
+        wf.setframerate(16000)
+        wf.writeframes(np.concatenate(recording, axis=0).tobytes())
+
+    # print("Recording saved!")
 
 def play_audio(file_path):
     import sounddevice as sd  # Import here to prevent conflicts
@@ -65,16 +79,18 @@ while True:
         print("Exiting chat...")
         break
 
-    record_audio(FILENAME, SAMPLE_RATE)  # Step 1: Record audio
-    transcription = whisper_model.transcribe(FILENAME)  # Step 2: Transcribe
+    # Step 1: Record audio
+    record_audio(FILENAME)
+
+    # Step 2: Transcribe
+    transcription = whisper_model.transcribe(FILENAME)  
     prompt_text = transcription["text"].strip()
-    print("You:", prompt_text)
+    # print(prompt_text)
 
     # Step 3: AI Response (Suppress print)
-    output = llm(prompt_text, max_tokens=50)
+    output = llm(prompt_text, max_tokens=30)
     response_text = remove_emojis(output["choices"][0]["text"].strip())
-    
-    print("AI:", response_text)
+    # print("AI:", response_text)
     
     # Step 4: Convert to Speech
     tts.tts_to_file(text=response_text, file_path=OUTPUT_AUDIO)
