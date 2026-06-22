@@ -1,0 +1,15 @@
+# Web Server Dependencies
+fastapi
+uvicorn
+python-multipart
+
+# Audio Processing
+sounddevice==0.5.1
+soundfile==0.13.0
+numpy==1.26.4
+
+# Machine Learning & AI Models
+llama-cpp-python
+faster-whisper
+piper-tts
+requests

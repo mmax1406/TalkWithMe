@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalkWithMe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>TalkWithMe</h2>
+            </div>
+            
+            <div class="settings">
+                <label for="language-select">Target Language</label>
+                <select id="language-select">
+                    <option value="French">French</option>
+                    <option value="Russian">Russian</option>
+                    <option value="Arabic">Arabic</option>
+                </select>
+            </div>
+            
+            <div class="agent-panel">
+                <h3>Tutor Agent</h3>
+                <div class="card suggestions-card">
+                    <h4>Suggestions</h4>
+                    <p id="suggestions-text" class="placeholder">Awaiting conversation...</p>
+                </div>
+            </div>
+            
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main-content">
+            <div class="chat-container" id="chat-container">
+                <div class="message ai-message">
+                    <div class="avatar">🤖</div>
+                    <div class="bubble">Hello! Let's practice speaking today. Choose your language on the left.</div>
+                </div>
+            </div>
+            
+            <div class="controls-container">
+                <div class="recording-status" id="recording-status"></div>
+                <button id="record-btn" class="record-btn">
+                    <span class="icon">🎙️</span> Hold to Talk
+                </button>
+                <p class="hint">Click and hold to record, release to send.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
